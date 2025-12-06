@@ -1,0 +1,60 @@
+version: "1"
+
+package:
+  id: org.deepin.driver.mesa
+  name: Linyaps Mesa3D Driver Extension
+  version: 25.3.1.0
+  kind: extension
+  description: |
+    Mesa3D userspace driver extension for Linyaps (OpenGL/EGL/Vulkan)
+  libs: [orig]
+  env:
+    # 先指定二进制依赖库加载优先级,让容器先识别扩展的Mesa3D库
+    LD_LIBRARY_PATH: $PREFIX/lib/x86_64-linux-gnu
+
+    # 再走 XDG_DATA_DIRS 自动发现 share 下的 icd.d / drirc.d
+    XDG_DATA_DIRS: $PREFIX/share
+
+    # 让 GLVND 到我们“投递”的目录找 vendor json（与 N 卡写法一致）
+    __EGL_VENDOR_LIBRARY_DIRS: $PREFIX/share/glvnd/egl_vendor.d
+
+    # DRI/GBM 驱动目录（有利于部分程序定位）
+    LIBGL_DRIVERS_PATH: $PREFIX/lib/x86_64-linux-gnu/dri
+    DRI_DRIVER_PATH: $PREFIX/lib/x86_64-linux-gnu/dri
+    GBM_BACKENDS_PATH: $PREFIX/lib/x86_64-linux-gnu/gbm
+
+    # OpenCL 驱动目录
+    OCL_ICD_VENDORS: $PREFIX/etc/OpenCL/vendors
+
+    # Vulkan 驱动目录
+    VK_DRIVER_FILES: $PREFIX/share/vulkan/icd.d/intel_hasvk_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/intel_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/radeon_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/virtio_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/nouveau_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/gfxstream_vk_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/dzn_icd.x86_64.json
+
+base: org.deepin.base/25.2.1
+
+# 如果你把 Mesa 打包成压缩文件放到 sources/，这里也可以写成 kinds:file 并在 build 里解包
+# sources:
+#   - kind: file
+#     url: file:///project/linglong/sources/mesa-root.tar.zst
+#     name: mesa-root.tar.zst
+
+build: |
+  set -euo pipefail
+  tar -zxf ./org.deepin.driver.mesa.tar.gz
+
+  # 源目录：就是你工程里的 Mesa 文件树（之前 tree 的那个）
+  SRC=./org.deepin.driver.mesa
+
+  # 1) 把原始文件放到 $PREFIX/orig（保持和 N 卡扩展一致的布局）
+  mkdir -p $PREFIX
+  cp -a "$SRC"/* $PREFIX
+
+  # 6) 把 Mesa 的库路径写到 ld.so.conf（与你 N 卡的做法对齐）
+  mkdir -p $PREFIX/etc
+  cat > $PREFIX/etc/ld.so.conf <<'EOF'
+  /opt/extensions/org.deepin.driver.mesa/lib/x86_64-linux-gnu
+  EOF
+
+  # 在构建环境里刷新下缓存；运行时由容器环境接管
+  ldconfig || true
+
+  echo 'build done'
