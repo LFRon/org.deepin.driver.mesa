@@ -6,7 +6,7 @@ package:
   version: 25.3.1.0
   kind: extension
   description: |
-    Mesa3D userspace driver extension for Linyaps (OpenGL/EGL/Vulkan)
+    Linyaps Mesa3D userspace driver extension (OpenGL/EGL/Vulkan)
   libs: [orig]
   env:
     # 先指定二进制依赖库加载优先级,让容器先识别扩展的Mesa3D库
@@ -58,3 +58,4 @@ build: |
   ldconfig || true
 
   echo 'build done'
+
