@@ -27,7 +27,7 @@ package:
     OCL_ICD_VENDORS: $PREFIX/etc/OpenCL/vendors
 
     # Vulkan 驱动目录
-    VK_DRIVER_FILES: $PREFIX/share/vulkan/icd.d/intel_hasvk_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/intel_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/radeon_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/virtio_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/nouveau_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/gfxstream_vk_icd.x86_64.json:$PREFIX/share/vulkan/icd.d/dzn_icd.x86_64.json
+    VK_DRIVER_FILES: $PREFIX/share/vulkan/icd.d/freedreno_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/dzn_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/broadcom_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/asahi_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/gfxstream_vk_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/intel_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/lvp_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/nouveau_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/panfrost_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/powervr_mesa_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/radeon_icd.aarch64.json:$PREFIX/share/vulkan/icd.d/virtio_icd.aarch64.json
 
 base: org.deepin.base/25.2.1
 
@@ -46,7 +46,7 @@ build: |
 
   # 1) 把原始文件放到 $PREFIX/orig（保持和 N 卡扩展一致的布局）
   mkdir -p $PREFIX
-  cp -a "$SRC"/* $PREFIX
+  cp -a -f "$SRC"/* $PREFIX
 
   # 6) 把 Mesa 的库路径写到 ld.so.conf（与你 N 卡的做法对齐）
   mkdir -p $PREFIX/etc
