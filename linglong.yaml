@@ -3,10 +3,10 @@ version: "1"
 package:
   id: org.deepin.driver.mesa
   name: Linyaps Mesa3D Driver Extension
-  version: 25.3.1.0
+  version: 25.3.2.0
   kind: extension
   description: |
-    Linyaps Mesa3D userspace driver extension (OpenGL/EGL/Vulkan)
+    Mesa3D userspace driver extension for Linyaps (OpenGL/EGL/Vulkan)
   libs: [orig]
   env:
     # 先指定二进制依赖库加载优先级,让容器先识别扩展的Mesa3D库
@@ -58,4 +58,3 @@ build: |
   ldconfig || true
 
   echo 'build done'
-
